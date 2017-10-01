@@ -1,0 +1,9 @@
+{
+  "name": "mavo-pouchdb",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Valter Kraemer",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {}
+}

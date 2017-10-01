@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Todo</title>
+
+  <script src="../../../mavo-pouchdb/src/pouchdb.min.js"></script>
+
+  <script src="../../../mavo/dist/mavo.js"></script>
+  <link rel="stylesheet" href="../../../mavo/dist/mavo.css">
+
+  <script src="../../../mavo-pouchdb/src/mavo-pouchdb.js"></script>
+  <link rel="stylesheet" href="../../../mavo-examples/todo/style.css">
+
+</head>
+<body>
+
+  <main mv-app="todo"
+    mv-storage="pouchdb=https://couchdb-d25f8f.smileupps.com/mavo"
+    mv-autosave="0.001">
+
+    <header>
+      <h1>My tasks</h1>
+      <p><strong>[count(done)]</strong> done out of <strong>[count(task)]</strong> total</p>
+    </header>
+
+    <ul>
+      <li property="task" mv-multiple>
+        <label>
+          <input property="done" type="checkbox" />
+          <span property="taskTitle">Do stuff</span>
+        </label>
+      </li>
+    </ul>
+
+  </main>
+
+  <!--<script src="http://localhost:35729/livereload.js"></script>-->
+
+</body>
+</html>
