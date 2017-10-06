@@ -22,11 +22,8 @@
       this.permissions.on(this.defaultPermissions.unauthenticated)
 
       if (this.remoteDB.getSession) {
-        this.remoteDB.getSession().then(info => {
-          if (info && info.userCtx && info.userCtx.name) {
-            this.permissions.on(this.defaultPermissions.authenticated)
-          }
-        })
+        this.remoteDB.getSession()
+          .then(info => this.onUser(info.userCtx))
       }
 
       function getPermissions (attr) {
@@ -116,7 +113,6 @@
     },
 
     login: function () {
-      console.log('login')
       let username = 'valter' || window.prompt('username')
       if (!username) {
         return Promise.resolve()
@@ -127,12 +123,8 @@
         return Promise.resolve()
       }
 
-      return this.remoteDB.login(username, password).then(data => {
-        this.permissions.off(this.defaultPermissions.unauthenticated).on(this.defaultPermissions.authenticated)
-      }).catch(err => {
-        console.error('err', err)
-        return Promise.reject(err)
-      })
+      return this.remoteDB.login(username, password)
+        .then(userCtx => this.onUser(userCtx))
     },
 
     logout: function () {
@@ -143,6 +135,13 @@
 
     upload: function (file) {
 
+    },
+
+    onUser: function(userCtx) {
+      if (userCtx && userCtx.name) {
+        this.permissions.off(this.defaultPermissions.unauthenticated).on(this.defaultPermissions.authenticated)
+      }
+      return Promise.resolve()
     },
 
     compareDocRevs: function (docA, docB) {
@@ -183,6 +182,6 @@
       hash |= 0
     }
 
-    return 'pouchdbdb' + hash
+    return 'pouchdb' + hash
   }
 })()
