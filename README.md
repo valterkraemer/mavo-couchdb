@@ -37,3 +37,9 @@ pouchdb-server
 ### Remote server
 
 There are multiple providers, the examples are using a free DB from `https://www.smileupps.com/store/apps/couchdb`
+
+### Known problems
+
+#### Forbidden even if logged in.
+
+Reason: The browser is not setting CouchDB/PouchDB's authorization cookie when the browser has a strict cookie policy.
