@@ -7,13 +7,35 @@
     id: 'Pouchbd',
     constructor: function (url, o) {
       this.key = url.split('pouchdb=')[1]
-      this.permissions.on(['edit', 'read', 'save'])
       this.rev = 0
       this.online = false
 
       this.remoteDB = new PouchDB(this.key)
       this.statusChangesCallbacks = []
       this.changesCallbacks = []
+
+      this.defaultPermissions = {
+        unauthenticated: getPermissions(this.mavo.element.getAttribute('unauthenticated-permissions')) || ['read', 'login'],
+        authenticated: getPermissions(this.mavo.element.getAttribute('authenticated-permissions')) || ['read', 'edit', 'add', 'delete', 'save', 'logout']
+      }
+
+      this.permissions.on(this.defaultPermissions.unauthenticated)
+
+      if (this.remoteDB.getSession) {
+        this.remoteDB.getSession().then(info => {
+          if (info && info.userCtx && info.userCtx.name) {
+            this.permissions.on(this.defaultPermissions.authenticated)
+          }
+        })
+      }
+
+      function getPermissions (attr) {
+        if (attr) {
+          return attr.split(/\s+/)
+        } else if (attr === '') {
+          return []
+        }
+      }
     },
 
     onStatusChange: function (callback) {
@@ -37,22 +59,11 @@
         retry: true
       }).on('change', onChange)
         .on('paused', info => {
-          // replication was paused, usually because of a lost connection
-          console.log('paused', info)
           // eslint-disable-next-line standard/no-callback-literal
           _this.statusChangesCallbacks.forEach(callback => callback(!info))
-        }).on('active', info => {
-          // replication was resumed
-          console.log('active', info)
-        }).on('denied', err => {
-          // a document failed to replicate (e.g. due to permissions)
-          console.log('denied', err)
-        }).on('complete', data => {
-          // totally unhandled complete (shouldn't happen)
-          console.log('complete', data)
         }).on('error', err => {
           // totally unhandled error (shouldn't happen)
-          console.error('error', err)
+          this.mavo.error(`PouchDB: ${err.error}. ${err.message}`, err)
         })
 
       function onChange (data) {
@@ -97,19 +108,37 @@
 
       return this.remoteDB.put(data).then(data => {
         this.rev = data.rev
+      }).catch(err => {
+        this.mavo.error(`PouchDB: ${err.error}. ${err.message}`, err)
+
+        return Promise.reject(err)
       })
     },
 
     login: function () {
-      return this.ready.then(() => {
-        if (this.user) {
-          return null
-        }
+      console.log('login')
+      let username = 'valter' || window.prompt('username')
+      if (!username) {
+        return Promise.resolve()
+      }
+
+      let password = 'valter' || window.prompt('password')
+      if (!password) {
+        return Promise.resolve()
+      }
+
+      return this.remoteDB.login(username, password).then(data => {
+        this.permissions.off(this.defaultPermissions.unauthenticated).on(this.defaultPermissions.authenticated)
+      }).catch(err => {
+        console.error('err', err)
+        return Promise.reject(err)
       })
     },
 
     logout: function () {
-
+      return this.remoteDB.logout().then(() => {
+        this.permissions.off(this.defaultPermissions.authenticated).on(this.defaultPermissions.unauthenticated)
+      })
     },
 
     upload: function (file) {
