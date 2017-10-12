@@ -6,6 +6,10 @@ A PouchDB backend plugin for [Mavo](https://mavo.io).
 
 - To-Do List - ([DEMO](https://valterkraemer.github.io/mavo-pouchdb/examples/todo/))
 
+## Tip
+
+Also check out [mavo-offline-interceptor](https://github.com/valterkraemer/mavo-offline-interceptor) for 4-way data-binding.
+
 ## Setup mavo-pouchdb
 
 Add PouchDB and Mavo-pouchdb scripts
