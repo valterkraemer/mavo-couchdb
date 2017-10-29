@@ -2,15 +2,15 @@
 
 A PouchDB backend plugin for [Mavo](https://mavo.io).
 
+Mavo-pouchdb is made to work with [mavo-offline-interceptor](https://github.com/valterkraemer/mavo-offline-interceptor) that enables changes to be pushed from the server and offline support.
+
 ## Examples
 
-- To-Do List - ([DEMO](https://valterkraemer.github.io/mavo-pouchdb/examples/todo/))
+- [To-do list](https://github.com/valterkraemer/mavo-pouchdb/tree/master/examples/todo) - ([DEMO](https://valterkraemer.github.io/mavo-pouchdb/examples/todo/))
+- [High score (Authentication)](https://github.com/valterkraemer/mavo-pouchdb/tree/master/examples/authentication) - ([DEMO](https://valterkraemer.github.io/mavo-pouchdb/examples/authentication/))
+- [Image and video of the day (File upload)](https://github.com/valterkraemer/mavo-pouchdb/tree/master/examples/file-storage) - ([DEMO](https://valterkraemer.github.io/mavo-pouchdb/examples/file-storage/))
 
-## Tip
-
-Also check out [mavo-offline-interceptor](https://github.com/valterkraemer/mavo-offline-interceptor) for 4-way data-binding.
-
-## Setup mavo-pouchdb
+## Quick setup
 
 Add PouchDB and Mavo-pouchdb scripts
 
@@ -26,6 +26,31 @@ E.g.
 
   ...
 ```
+
+## Attributes
+
+| Attribute                     | Description                                       | Example                               |
+|:------------------------------|:------------------------------------------------- |:------------------------------------- |
+| `mv-storage`                  | Database url starting with `pouchdb=` (required)  | `pouchdb=http://localhost:5984/mavo`  |
+
+#### Permission attributes
+
+| Attribute                     | Default                                                         | Description                           |
+|:----------------------------- |:--------------------------------------------------------------- |:------------------------------------- |
+| `authenticated-permissions`   | `read`, also `login` if [pouchdb-authentication](https://github.com/pouchdb-community/pouchdb-authentication) plugin is added  | Permissions for unauthenticated users |
+| `unauthenticated-permissions` | `read edit add delete save logout`                              | Permissions for authenticated users   |
+
+Your Mavo id will be used as name for the root object in database.
+
+## Authentication
+
+To use authentication you need to add [pouchdb-authentication](https://github.com/pouchdb-community/pouchdb-authentication).
+
+```
+<script src="path/to/pouchdb.authentication.js"></script>
+```
+
+Set up users and permissions in CouchDB: [CouchDB Security](http://docs.couchdb.org/en/2.1.0/intro/security.html)
 
 ## Setup server
 
