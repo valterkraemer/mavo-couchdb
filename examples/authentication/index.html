@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Authentication</title>
+
+  <script src="../../../mavo-pouchdb/src/pouchdb.min.js"></script>
+  <script src="../../../mavo-pouchdb/src/pouchdb.authentication.min.js"></script>
+
+  <script src="../../../mavo/dist/mavo.js"></script>
+  <link rel="stylesheet" href="../../../mavo/dist/mavo.css">
+
+  <script src="../../../mavo-pouchdb/src/mavo-pouchdb.js"></script>
+  <link rel="stylesheet" href="../../../mavo-examples/authentication/style.css">
+</head>
+<body>
+  <main mv-app="authentication"
+    mv-storage="pouchdb=https://couchdb-d25f8f.smileupps.com/authentication"
+    mv-autosave="0.001"
+    unauthenticated-permissions="read login">
+
+    <header>
+      <h1>Current high score</h1>
+    </header>
+
+    <div class="table">
+      <div class="thead tr">
+        <div class="td">User</div>
+        <div class="td">Score</div>
+      </div>
+
+      <div class="tr" mv-multiple property="user">
+        <div class="td" property="name"></div>
+        <div class="td" property="score"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="http://localhost:35729/livereload.js"></script>
+
+</body>
+</html>

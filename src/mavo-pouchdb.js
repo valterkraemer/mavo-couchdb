@@ -155,18 +155,22 @@
     },
 
     login: function () {
-      let username = 'valter' || window.prompt('username')
+      let username = window.prompt('username')
       if (!username) {
         return Promise.resolve()
       }
 
-      let password = 'valter' || window.prompt('password')
+      let password = window.prompt('password')
       if (!password) {
         return Promise.resolve()
       }
 
       return this.remoteDB.login(username, password)
         .then(userCtx => this.onUser(userCtx))
+        .catch(error => {
+          this.mavo.error('PouchDB: ' + error.message)
+          return Promise.reject(error)
+        })
     },
 
     logout: function () {
