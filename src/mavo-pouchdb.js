@@ -5,26 +5,58 @@
   Mavo.Backend.register($.Class({
     extends: Mavo.Backend,
     id: 'Pouchbd',
-    constructor: function (url, o) {
-      this.key = url.split('pouchdb=')[1]
-      this.rev = 0
-      this.online = false
-
-      this.remoteDB = new PouchDB(this.key)
+    constructor: function (value, o) {
       this.statusChangesCallbacks = []
       this.changesCallbacks = []
 
+      this.id = this.mavo.id || 'mavo'
+      this.url = value.split('pouchdb=')[1]
+
+      this.remoteDB = new PouchDB(this.url)
+
+      // ATTRIBUTES
+
+      let unauthenticatedPermissionsAttr = this.mavo.element.getAttribute('unauthenticated-permissions')
+      let authenticatedPermissionsAttr = this.mavo.element.getAttribute('authenticated-permissions')
+
+      // PERMISSIONS
+
+      let authenticatedPermissions = getPermissions(authenticatedPermissionsAttr) || ['read', 'edit', 'add', 'delete', 'save', 'logout']
+
+      // Use default permissions if unauthenticated-permissions isn't specified,
+      // pouchdb-authentication (https://github.com/pouchdb-community/pouchdb-authentication)
+      // has to be added if permission 'login' is used
+      let unauthenticatedPermissions = getPermissions(unauthenticatedPermissionsAttr)
+      if (unauthenticatedPermissions) {
+        if (!this.remoteDB.login && unauthenticatedPermissions.includes('login')) {
+          setTimeout(() => {
+            this.mavo.error('PouchDB: pouchdb-authentication plugin missing (needed if permission \'login\' is specified)')
+          }, 0)
+          return
+        }
+      } else {
+        if (this.remoteDB.login) {
+          unauthenticatedPermissions = ['read', 'login']
+        } else {
+          unauthenticatedPermissions = ['read']
+        }
+      }
+
       this.defaultPermissions = {
-        unauthenticated: getPermissions(this.mavo.element.getAttribute('unauthenticated-permissions')) || ['read', 'login'],
-        authenticated: getPermissions(this.mavo.element.getAttribute('authenticated-permissions')) || ['read', 'edit', 'add', 'delete', 'save', 'logout']
+        authenticated: authenticatedPermissions,
+        unauthenticated: unauthenticatedPermissions
       }
 
       this.permissions.on(this.defaultPermissions.unauthenticated)
+
+      // INIT POUCHDB
 
       if (this.remoteDB.getSession) {
         this.remoteDB.getSession()
           .then(info => this.onUser(info.userCtx))
       }
+
+      // HELPER FUNCTIONS
 
       function getPermissions (attr) {
         if (attr) {
@@ -46,49 +78,43 @@
         return
       }
 
-      let _this = this
-
-      let dbName = hash(this.key)
+      let dbName = hash(this.url)
 
       this.localDB = new PouchDB(dbName)
+
       this.localDB.replicate.from(this.remoteDB, {
         live: true,
         retry: true
-      }).on('change', onChange)
-        .on('paused', info => {
-          // eslint-disable-next-line standard/no-callback-literal
-          _this.statusChangesCallbacks.forEach(callback => callback(!info))
-        }).on('error', err => {
-          // totally unhandled error (shouldn't happen)
-          this.mavo.error(`PouchDB: ${err.error}. ${err.message}`, err)
-        })
-
-      function onChange (data) {
-        console.log('Pouchdb onChange', data)
-
+      }).on('change', data => {
         if (!data || !data.docs || !data.docs.length) {
           return
         }
 
         let doc = data.docs[0]
 
-        if (doc._id !== _this.mavo.id || doc._rev <= _this.rev) {
+        if (doc._id !== this.id || doc._rev <= this.rev) {
           return
         }
 
-        _this.rev = doc._rev
+        this.rev = doc._rev
 
         try {
           // eslint-disable-next-line standard/no-callback-literal
-          _this.changesCallbacks.forEach(callback => callback(doc))
+          this.changesCallbacks.forEach(callback => callback(doc))
         } catch (err) {
           console.error('onChange err', err)
         }
-      }
+      }).on('paused', info => {
+        // eslint-disable-next-line standard/no-callback-literal
+        this.statusChangesCallbacks.forEach(callback => callback(!info))
+      }).on('error', err => {
+        // totally unhandled error (shouldn't happen)
+        this.mavo.error(`PouchDB: ${err.error}. ${err.message}`, err)
+      })
     },
 
     load: function () {
-      return this.remoteDB.get(this.mavo.id).then(data => {
+      return this.remoteDB.get(this.id).then(data => {
         this.rev = data._rev
         return data
       }).catch(err => {
@@ -100,15 +126,31 @@
     },
 
     store: function (data) {
-      data._id = this.mavo.id
+      this.storeData = data
+
+      return this.storing || (this.storing = this.put().then(() => {
+        delete this.storing
+      }).catch(err => {
+        delete this.storing
+        this.mavo.error(`PouchDB: ${err.error}. ${err.message}`, err)
+
+        return Promise.reject(err)
+      }))
+    },
+
+    put: function () {
+      let data = this.storeData
+      delete this.storeData
+
+      data._id = this.id
       data._rev = this.rev || data._rev
 
       return this.remoteDB.put(data).then(data => {
         this.rev = data.rev
-      }).catch(err => {
-        this.mavo.error(`PouchDB: ${err.error}. ${err.message}`, err)
 
-        return Promise.reject(err)
+        if (this.storeData) {
+          return this.put()
+        }
       })
     },
 
@@ -137,7 +179,7 @@
 
     },
 
-    onUser: function(userCtx) {
+    onUser: function (userCtx) {
       if (userCtx && userCtx.name) {
         this.permissions.off(this.defaultPermissions.unauthenticated).on(this.defaultPermissions.authenticated)
       }
