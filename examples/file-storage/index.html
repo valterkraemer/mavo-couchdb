@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>File Storage</title>
+
+  <script src="../../../mavo-pouchdb/src/pouchdb.min.js"></script>
+
+  <!--<script src="../../../mavo/dist/mavo.js"></script>-->
+  <script src="../../../mavo-examples/file-storage/mavo-modified.js"></script>
+  <link rel="stylesheet" href="../../../mavo/dist/mavo.css">
+
+  <script src="../../../mavo-pouchdb/src/mavo-pouchdb.js"></script>
+  <link rel="stylesheet" href="../../../mavo-examples/file-storage/style.css">
+</head>
+<body>
+  <main mv-app="file-storage"
+    mv-storage="pouchdb=https://couchdb-d25f8f.smileupps.com/file-storage"
+    unauthenticated-permissions="read edit save"
+    mv-autosave="0.001">
+
+    <header>
+      <h1 property="heading">Image and video of the day!</h1>
+    </header>
+
+    <div class="container">
+      <img src="http://via.placeholder.com/400x400" property="image">
+
+      <video autoplay property="video"></video>
+    </div>
+
+  </main>
+
+  <script src="http://localhost:35729/livereload.js"></script>
+
+</body>
+</html>

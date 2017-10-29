@@ -180,7 +180,11 @@
     },
 
     upload: function (file) {
+      let docId = `${file.name}-${Date.now()}`
 
+      return this.remoteDB.putAttachment(docId, file.name, file, file.type).then(doc => {
+        return `${this.url}/${doc.id}/${file.name}`
+      })
     },
 
     onUser: function (userCtx) {
