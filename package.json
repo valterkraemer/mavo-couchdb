@@ -5,7 +5,7 @@
   "author": "Valter Kraemer",
   "license": "MIT",
   "scripts": {
-    "build": "babel ./src/mavo-pouchdb.js -o ./dist/mavo-pouchdb.js --presets es2015 --source-maps & babel ./src/mavo-pouchdb.js -o ./dist/mavo-pouchdb.min.js --presets es2015 --presets minify --source-maps"
+    "build": "babel ./src/mavo-pouchdb.js -o ./dist/mavo-pouchdb.js --presets es2015 --source-maps & babel ./src/mavo-pouchdb.js -o ./dist/mavo-pouchdb.min.js --presets es2015,minify --source-maps"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
