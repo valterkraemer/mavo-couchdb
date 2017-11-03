@@ -1,9 +1,15 @@
 {
   "name": "mavo-pouchdb",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "PouchDB plugin for Mavo",
   "author": "Valter Kraemer",
   "license": "MIT",
-  "private": true,
-  "dependencies": {}
+  "scripts": {
+    "build": "babel ./src/mavo-pouchdb.js -o ./dist/mavo-pouchdb.js --presets es2015 --source-maps & babel ./src/mavo-pouchdb.js -o ./dist/mavo-pouchdb.min.js --presets es2015 --presets minify --source-maps"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-minify": "^0.2.0"
+  }
 }
