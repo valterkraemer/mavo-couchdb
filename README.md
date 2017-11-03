@@ -12,14 +12,13 @@ Mavo-pouchdb is made to work with [mavo-offline-interceptor](https://github.com/
 
 ## Quick setup
 
-Add PouchDB and Mavo-pouchdb scripts
-
-    <script src="//cdn.jsdelivr.net/npm/pouchdb@6.3.4/dist/pouchdb.min.js"></script>
-    <script src="path/to/mavo-pouchdb.js"></script>
-
-Set mv-storage to `pouchdb=url-to-pouchdb`
-
-E.g.
+1. Get the newest version of mavo-pouchdb from the [release section](https://github.com/valterkraemer/mavo-pouchdb/releases).
+2. Add PouchDB and mavo-pouchdb to the `<head>` of your HTML file.
+```
+<script src="//cdn.jsdelivr.net/npm/pouchdb@6.3.4/dist/pouchdb.min.js"></script>
+<script src="path/to/mavo-pouchdb.js"></script>
+```
+3. Set mv-storage to `pouchdb=url-to-pouchdb`
 ```
 <main mv-app="todo"
   mv-storage="pouchdb=http://localhost:5984/mavo">
