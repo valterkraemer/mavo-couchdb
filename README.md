@@ -36,8 +36,8 @@ Mavo-pouchdb is made to work with [mavo-offline-interceptor](https://github.com/
 
 | Attribute                     | Default                                                         | Description                           |
 |:----------------------------- |:--------------------------------------------------------------- |:------------------------------------- |
-| `authenticated-permissions`   | `read`, also `login` if [pouchdb-authentication](https://github.com/pouchdb-community/pouchdb-authentication) plugin is added  | Permissions for unauthenticated users |
-| `unauthenticated-permissions` | `read edit add delete save logout`                              | Permissions for authenticated users   |
+| `unauthenticated-permissions` | `read`, also `login` if [pouchdb-authentication](https://github.com/pouchdb-community/pouchdb-authentication) plugin is added  | Permissions for unauthenticated users |
+| `authenticated-permissions`   | `read edit add delete save logout`                              | Permissions for authenticated users   |
 
 Your Mavo id will be used as name for the root object in database.
 
