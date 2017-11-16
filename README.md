@@ -1,8 +1,8 @@
 # Mavo-pouchdb
 
-A PouchDB backend plugin for [Mavo](https://mavo.io).
+A PouchDB backend plugin for [Mavo](https://mavo.io)  that allows realtime data.
 
-Mavo-pouchdb is made to work with [mavo-offline-interceptor](https://github.com/valterkraemer/mavo-offline-interceptor) that enables changes to be pushed from the server and offline support.
+Mavo-pouchdb is made to work with [mavo-offline-interceptor](https://github.com/valterkraemer/mavo-offline-interceptor) that caches data and makes Mavo continue to work when going offline.
 
 **Note**: Does not work well with Mavo 0.1.4 nor earlier. You may need to use the dev version of Mavo.
 
@@ -15,11 +15,13 @@ Mavo-pouchdb is made to work with [mavo-offline-interceptor](https://github.com/
 ## Quick setup
 
 1. Get the newest version of mavo-pouchdb from the [release section](https://github.com/valterkraemer/mavo-pouchdb/releases).
-2. Add PouchDB and mavo-pouchdb to the `<head>` of your HTML file.
+
+2. Add PouchDB and mavo-pouchdb to your HTML file.
 ```
 <script src="//cdn.jsdelivr.net/npm/pouchdb@6.3.4/dist/pouchdb.min.js"></script>
 <script src="path/to/mavo-pouchdb.js"></script>
 ```
+
 3. Set mv-storage to `pouchdb=url-to-pouchdb`
 ```
 <main mv-app="todo"
@@ -30,9 +32,10 @@ Mavo-pouchdb is made to work with [mavo-offline-interceptor](https://github.com/
 
 ## Attributes
 
-| Attribute                     | Description                                       | Example                               |
-|:------------------------------|:------------------------------------------------- |:------------------------------------- |
-| `mv-storage`                  | Database url starting with `pouchdb=` (required)  | `pouchdb=http://localhost:5984/mavo`  |
+| Attribute                     | Description                                                                                   |
+|:------------------------------|:--------------------------------------------------------------------------------------------- |
+| `mv-storage`                  | **Required** Database url starting with `pouchdb=`. E.g. `pouchdb=http://localhost:5984/mavo` |
+| `mv-server-push`              | Update data in browser if there is a change in the database.                                  |
 
 #### Permission attributes
 

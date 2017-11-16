@@ -90,7 +90,7 @@
 
             let doc = data.docs[0]
 
-            // Ingore if data is old
+            // Ignore if data is old
             if (this.compareDocRevs({
               _rev: this.rev
             }, doc) !== 1) {
