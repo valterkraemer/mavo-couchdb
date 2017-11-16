@@ -4,6 +4,8 @@ A PouchDB backend plugin for [Mavo](https://mavo.io).
 
 Mavo-pouchdb is made to work with [mavo-offline-interceptor](https://github.com/valterkraemer/mavo-offline-interceptor) that enables changes to be pushed from the server and offline support.
 
+**Note**: Does not work well with Mavo 0.1.4 nor earlier. You may need to use the dev version of Mavo.
+
 ## Examples
 
 - [To-do list](https://github.com/valterkraemer/mavo-pouchdb/tree/master/examples/todo) - ([DEMO](https://valterkraemer.github.io/mavo-pouchdb/examples/todo/))
@@ -34,10 +36,10 @@ Mavo-pouchdb is made to work with [mavo-offline-interceptor](https://github.com/
 
 #### Permission attributes
 
-| Attribute                     | Default                                                         | Description                           |
-|:----------------------------- |:--------------------------------------------------------------- |:------------------------------------- |
-| `unauthenticated-permissions` | `read`, also `login` if [pouchdb-authentication](https://github.com/pouchdb-community/pouchdb-authentication) plugin is added  | Permissions for unauthenticated users |
-| `authenticated-permissions`   | `read edit add delete save logout`                              | Permissions for authenticated users   |
+| Attribute                        | Default                                                         | Description                           |
+|:-------------------------------- |:--------------------------------------------------------------- |:------------------------------------- |
+| `mv-unauthenticated-permissions` | `read`, also `login` if [pouchdb-authentication](https://github.com/pouchdb-community/pouchdb-authentication) plugin is added  | Permissions for unauthenticated users |
+| `mv-authenticated-permissions`   | `read edit add delete save logout`                              | Permissions for authenticated users   |
 
 Your Mavo id will be used as name for the root object in database.
 

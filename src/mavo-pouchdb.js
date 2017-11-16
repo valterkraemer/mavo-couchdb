@@ -16,8 +16,8 @@
 
       // ATTRIBUTES
 
-      let unauthenticatedPermissionsAttr = this.mavo.element.getAttribute('unauthenticated-permissions')
-      let authenticatedPermissionsAttr = this.mavo.element.getAttribute('authenticated-permissions')
+      let unauthenticatedPermissionsAttr = this.mavo.element.getAttribute('mv-unauthenticated-permissions')
+      let authenticatedPermissionsAttr = this.mavo.element.getAttribute('mv-authenticated-permissions')
 
       // PERMISSIONS
 
@@ -29,10 +29,7 @@
       let unauthenticatedPermissions = getPermissions(unauthenticatedPermissionsAttr)
       if (unauthenticatedPermissions) {
         if (!this.remoteDB.login && unauthenticatedPermissions.includes('login')) {
-          setTimeout(() => {
-            this.mavo.error('PouchDB: pouchdb-authentication plugin missing (needed if permission \'login\' is specified)')
-          }, 0)
-          return
+          return this.mavo.error('PouchDB: pouchdb-authentication plugin missing (needed if permission \'login\' is specified)')
         }
       } else {
         if (this.remoteDB.login) {
