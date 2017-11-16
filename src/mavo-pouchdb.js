@@ -7,7 +7,6 @@
     id: 'Pouchbd',
     constructor: function (value, o) {
       this.statusChangesCallbacks = []
-      this.changesCallbacks = []
 
       this.id = this.mavo.id || 'mavo'
       this.url = value.split('pouchdb=')[1]
@@ -53,6 +52,12 @@
           .then(info => this.onUser(info.userCtx))
       }
 
+      // Enable pushing data from server
+      let serverPushAttr = this.mavo.element.getAttribute('mv-server-push')
+      if (serverPushAttr !== null && serverPushAttr !== 'false') {
+        this.setListenForChanges(true)
+      }
+
       // HELPER FUNCTIONS
 
       function getPermissions (attr) {
@@ -68,46 +73,55 @@
       this.statusChangesCallbacks.push(callback)
     },
 
-    onChange: function (callback) {
-      this.changesCallbacks.push(callback)
+    setListenForChanges: function (bool) {
+      if (bool) {
+        if (!this.syncHandler) {
+          let dbName = hash(this.url)
 
-      if (this.localDB) {
-        return
+          let localDB = new PouchDB(dbName)
+
+          this.syncHandler = localDB.replicate.from(this.remoteDB, {
+            live: true,
+            retry: true
+          }).on('change', data => {
+            if (!data || !data.docs || !data.docs.length) {
+              return
+            }
+
+            let doc = data.docs[0]
+
+            // Ingore if data is old
+            if (this.compareDocRevs({
+              _rev: this.rev
+            }, doc) !== 1) {
+              return
+            }
+
+            this.rev = doc._rev
+
+            // Otherwise error is swallowed by PouchDB
+            try {
+              // eslint-disable-next-line standard/no-callback-literal
+              this.onNewData(doc)
+            } catch (err) {
+              console.error('onChange err', err)
+            }
+          }).on('paused', info => {
+            // eslint-disable-next-line standard/no-callback-literal
+            this.statusChangesCallbacks.forEach(callback => callback(!info))
+          }).on('error', err => {
+            // totally unhandled error (shouldn't happen)
+            this.mavo.error(`PouchDB: ${err.error}. ${err.message}`, err)
+          })
+        }
+      } else {
+        this.syncHandler.cancel()
+        delete this.syncHandler
       }
+    },
 
-      let dbName = hash(this.url)
-
-      this.localDB = new PouchDB(dbName)
-
-      this.localDB.replicate.from(this.remoteDB, {
-        live: true,
-        retry: true
-      }).on('change', data => {
-        if (!data || !data.docs || !data.docs.length) {
-          return
-        }
-
-        let doc = data.docs[0]
-
-        if (doc._id !== this.id || doc._rev <= this.rev) {
-          return
-        }
-
-        this.rev = doc._rev
-
-        try {
-          // eslint-disable-next-line standard/no-callback-literal
-          this.changesCallbacks.forEach(callback => callback(doc))
-        } catch (err) {
-          console.error('onChange err', err)
-        }
-      }).on('paused', info => {
-        // eslint-disable-next-line standard/no-callback-literal
-        this.statusChangesCallbacks.forEach(callback => callback(!info))
-      }).on('error', err => {
-        // totally unhandled error (shouldn't happen)
-        this.mavo.error(`PouchDB: ${err.error}. ${err.message}`, err)
-      })
+    onNewData: function (data) {
+      return this.mavo.render(data)
     },
 
     load: function () {
@@ -123,31 +137,51 @@
     },
 
     store: function (data) {
-      this.storeData = data
+      // Needed to make this.mavo.unsavedChanges work correctly
+      return Promise.resolve().then(() => {
+        this.storeData = data
 
-      return this.storing || (this.storing = this.put().then(() => {
-        delete this.storing
-      }).catch(err => {
-        delete this.storing
-        this.mavo.error(`PouchDB: ${err.error}. ${err.message}`, err)
+        // this.mavo.unsavedChanges needed because of https://github.com/mavoweb/mavo/issues/256
+        if (!this.mavo.unsavedChanges || this.storing) {
+          return
+        }
 
-        return Promise.reject(err)
-      }))
+        this.storing = true
+
+        return this.put().then(() => {
+          this.storing = false
+        })
+      })
     },
 
-    put: function () {
-      let data = this.storeData
+    put: function (data) {
+      data = this.storeData || data
       delete this.storeData
 
       data._id = this.id
-      data._rev = this.rev || data._rev
+      data._rev = this.rev
 
-      return this.remoteDB.put(data).then(data => {
-        this.rev = data.rev
+      // Remove unneccesary properties (caused conflicts)
+      '_attachments _deleted _revisions _revs_info _conflicts _deleted_conflicts _local_seq'.split(' ').forEach(prop => {
+        delete data[prop]
+      })
+
+      // Overrides server with local data
+      return this.remoteDB.put(data).then(resData => {
+        this.rev = resData.rev
 
         if (this.storeData) {
           return this.put()
         }
+      }).catch(err => {
+        if (err.name === 'conflict') {
+          return this.remoteDB.get(this.id).then(resData => {
+            this.rev = resData._rev
+          }).then(() => this.put(data))
+        }
+
+        this.mavo.error(`PouchDB: ${err.error}. ${err.message}`, err)
+        return Promise.reject(err)
       })
     },
 
