@@ -4,7 +4,7 @@ A PouchDB backend plugin for [Mavo](https://mavo.io)  that allows realtime data.
 
 Mavo-pouchdb is made to work with [mavo-offline-interceptor](https://github.com/valterkraemer/mavo-offline-interceptor) that caches data and makes Mavo continue to work when going offline.
 
-**Note**: Does not work well with Mavo 0.1.4 nor earlier. You may need to use the dev version of Mavo.
+Requires Mavo version 0.1.5 or higher, tested with 0.1.5.
 
 ## Examples
 

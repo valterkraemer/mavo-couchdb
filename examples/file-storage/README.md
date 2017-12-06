@@ -4,6 +4,4 @@
 
 [View Demo](https://valterkraemer.github.io/mavo-pouchdb/examples/file-storage/)
 
-*Using custom Mavo version!*
-
 This example allows you to upload an image and a video.
