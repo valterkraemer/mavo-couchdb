@@ -4,7 +4,7 @@
 
 [View Demo](https://valterkraemer.github.io/mavo-couchdb/examples/authentication/)
 
-This example show a high score list where you have to log in to be able to edit it. Because editing is only done by the author the mv-bar is hidden. To login one need to add `?login` to the end of the url (https://valterkraemer.github.io/mavo-couchdb/examples/authentication?login).
+This example show a high score list where you have to log in to be able to edit it.
 
 *User: valter pass: valter*
 
