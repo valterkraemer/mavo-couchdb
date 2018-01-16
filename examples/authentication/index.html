@@ -3,18 +3,18 @@
 <head>
   <title>Authentication</title>
 
-  <script src="../../../mavo-pouchdb/src/pouchdb.min.js"></script>
-  <script src="../../../mavo-pouchdb/src/pouchdb.authentication.min.js"></script>
+  <script src="../../../mavo-couchdb/src/pouchdb.min.js"></script>
+  <script src="../../../mavo-couchdb/src/pouchdb.authentication.min.js"></script>
 
   <script src="https://get.mavo.io/0.1.5/mavo.es5.min.js"></script>
   <link rel="stylesheet" href="https://get.mavo.io/0.1.5/mavo.css">
 
-  <script src="../../../mavo-pouchdb/src/mavo-pouchdb.js"></script>
+  <script src="../../../mavo-couchdb/src/mavo-couchdb.js"></script>
   <link rel="stylesheet" href="../../../mavo-examples/authentication/style.css">
 </head>
 <body>
   <main mv-app="authentication"
-    mv-storage="pouchdb=https://couchdb-d25f8f.smileupps.com/authentication"
+    mv-storage="couchdb=https://couchdb-d25f8f.smileupps.com/authentication"
     mv-autosave="0"
     mv-unauthenticated-permissions="read login">
 

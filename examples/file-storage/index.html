@@ -3,17 +3,17 @@
 <head>
   <title>File Storage</title>
 
-  <script src="../../../mavo-pouchdb/src/pouchdb.min.js"></script>
+  <script src="../../../mavo-couchdb/src/pouchdb.min.js"></script>
 
   <script src="https://get.mavo.io/0.1.5/mavo.es5.min.js"></script>
   <link rel="stylesheet" href="https://get.mavo.io/0.1.5/mavo.css">
 
-  <script src="../../../mavo-pouchdb/src/mavo-pouchdb.js"></script>
+  <script src="../../../mavo-couchdb/src/mavo-couchdb.js"></script>
   <link rel="stylesheet" href="../../../mavo-examples/file-storage/style.css">
 </head>
 <body>
   <main mv-app="file-storage"
-    mv-storage="pouchdb=https://couchdb-d25f8f.smileupps.com/file-storage"
+    mv-storage="couchdb=https://couchdb-d25f8f.smileupps.com/file-storage"
     mv-unauthenticated-permissions="read edit save"
     mv-autosave="0">
 

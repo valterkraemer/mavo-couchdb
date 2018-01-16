@@ -4,12 +4,12 @@
 
   Mavo.Backend.register($.Class({
     extends: Mavo.Backend,
-    id: 'Pouchbd',
+    id: 'Couchdb',
     constructor: function (value, o) {
       this.statusChangesCallbacks = []
 
       this.id = this.mavo.id || 'mavo'
-      this.url = value.split('pouchdb=')[1]
+      this.url = value.split('couchdb=')[1]
 
       this.remoteDB = new PouchDB(this.url)
 
@@ -28,7 +28,7 @@
       let unauthenticatedPermissions = getPermissions(unauthenticatedPermissionsAttr)
       if (unauthenticatedPermissions) {
         if (!this.remoteDB.login && unauthenticatedPermissions.includes('login')) {
-          return this.mavo.error('PouchDB: pouchdb-authentication plugin missing (needed if permission \'login\' is specified)')
+          return this.mavo.error('CouchDB: pouchdb-authentication plugin missing (needed if permission \'login\' is specified)')
         }
       } else {
         if (this.remoteDB.login) {
@@ -111,7 +111,7 @@
             this.statusChangesCallbacks.forEach(callback => callback(!info))
           }).on('error', err => {
             // totally unhandled error (shouldn't happen)
-            this.mavo.error(`PouchDB: ${err.error}. ${err.message}`, err)
+            this.mavo.error(`CouchDB: ${err.error}. ${err.message}`, err)
           })
         }
       } else {
@@ -180,7 +180,7 @@
           }).then(() => this.put(data))
         }
 
-        this.mavo.error(`PouchDB: ${err.error}. ${err.message}`, err)
+        this.mavo.error(`CouchDB: ${err.error}. ${err.message}`, err)
         return Promise.reject(err)
       })
     },
@@ -199,7 +199,7 @@
       return this.remoteDB.login(username, password)
         .then(userCtx => this.onUser(userCtx))
         .catch(error => {
-          this.mavo.error('PouchDB: ' + error.message)
+          this.mavo.error('CouchDB: ' + error.message)
           return Promise.reject(error)
         })
     },
@@ -244,7 +244,7 @@
     },
 
     static: {
-      test: value => value.startsWith('pouchdb=')
+      test: value => value.startsWith('couchdb=')
     }
   }))
 
@@ -263,6 +263,6 @@
       hash |= 0
     }
 
-    return 'pouchdb' + hash
+    return 'couchdb' + hash
   }
 })()

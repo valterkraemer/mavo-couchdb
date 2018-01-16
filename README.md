@@ -1,31 +1,35 @@
-# Mavo-pouchdb
+# Mavo-couchdb
 
-A PouchDB backend plugin for [Mavo](https://mavo.io)  that allows realtime data.
+A CouchDB backend plugin for [Mavo](https://mavo.io) that allows realtime data.
 
-Mavo-pouchdb is made to work with [mavo-offline-interceptor](https://github.com/valterkraemer/mavo-offline-interceptor) that caches data and makes Mavo continue to work when going offline.
+Mavo-couchdb is made to work with [mavo-offline](https://github.com/valterkraemer/mavo-offline) that caches data and makes Mavo continue to work when going offline.
 
-Requires Mavo version 0.1.5 or higher, tested with 0.1.5.
+Requirements:
+
+- [Mavo](https://mavo.io/get/), tested with v0.1.5
+- [PouchDB](https://pouchdb.com), tested with v6.4.1
+- [Pouchdb-authentication](https://github.com/pouchdb-community/pouchdb-authentication), (optional) needed for authentication. Tested with v1.1.0
 
 ## Examples
 
-- [To-do list](https://github.com/valterkraemer/mavo-pouchdb/tree/master/examples/todo) - ([DEMO](https://valterkraemer.github.io/mavo-pouchdb/examples/todo/))
-- [High score (Authentication)](https://github.com/valterkraemer/mavo-pouchdb/tree/master/examples/authentication) - ([DEMO](https://valterkraemer.github.io/mavo-pouchdb/examples/authentication/))
-- [Image and video of the day (File upload)](https://github.com/valterkraemer/mavo-pouchdb/tree/master/examples/file-storage) - ([DEMO](https://valterkraemer.github.io/mavo-pouchdb/examples/file-storage/))
+- [To-do list](https://github.com/valterkraemer/mavo-couchdb/tree/master/examples/todo) - ([DEMO](https://valterkraemer.github.io/mavo-couchdb/examples/todo/))
+- [High score (Authentication)](https://github.com/valterkraemer/mavo-couchdb/tree/master/examples/authentication) - ([DEMO](https://valterkraemer.github.io/mavo-couchdb/examples/authentication/))
+- [Image and video of the day (File upload)](https://github.com/valterkraemer/mavo-couchdb/tree/master/examples/file-storage) - ([DEMO](https://valterkraemer.github.io/mavo-couchdb/examples/file-storage/))
 
 ## Quick setup
 
-1. Get the newest version of mavo-pouchdb from the [release section](https://github.com/valterkraemer/mavo-pouchdb/releases).
+1. Get the newest version of mavo-couchdb from the [release section](https://github.com/valterkraemer/mavo-couchdb/releases).
 
-2. Add PouchDB and mavo-pouchdb to your HTML file.
+2. Add PouchDB and mavo-couchdb to your HTML file.
 ```
-<script src="//cdn.jsdelivr.net/npm/pouchdb@6.3.4/dist/pouchdb.min.js"></script>
-<script src="path/to/mavo-pouchdb.js"></script>
+<script src="//cdn.jsdelivr.net/npm/pouchdb@6.4.1/dist/pouchdb.min.js"></script>
+<script src="path/to/mavo-couchdb.js"></script>
 ```
 
-3. Set mv-storage to `pouchdb=url-to-pouchdb`
+3. Set mv-storage to `couchdb=url-to-couchdb`
 ```
 <main mv-app="todo"
-  mv-storage="pouchdb=http://localhost:5984/mavo">
+  mv-storage="couchdb=http://localhost:5984/mavo">
 
   ...
 ```
@@ -34,7 +38,7 @@ Requires Mavo version 0.1.5 or higher, tested with 0.1.5.
 
 | Attribute                     | Description                                                                                   |
 |:------------------------------|:--------------------------------------------------------------------------------------------- |
-| `mv-storage`                  | **Required** Database url starting with `pouchdb=`. E.g. `pouchdb=http://localhost:5984/mavo` |
+| `mv-storage`                  | **Required** Database url starting with `couchdb=`. E.g. `couchdb=http://localhost:5984/mavo` |
 | `mv-server-push`              | Update data in browser if there is a change in the database.                                  |
 
 #### Permission attributes
@@ -75,4 +79,4 @@ There are multiple providers, the examples are using a free DB from `https://www
 
 #### Forbidden even if logged in.
 
-Reason: The browser is not setting CouchDB/PouchDB's authorization cookie when the browser has a strict cookie policy.
+Reason: The browser is not setting CouchDB's authorization cookie when the browser has a strict cookie policy.

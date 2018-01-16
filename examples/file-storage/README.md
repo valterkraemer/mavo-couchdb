@@ -2,6 +2,6 @@
 
 ![preview](assets/images/preview.jpg "Preview")
 
-[View Demo](https://valterkraemer.github.io/mavo-pouchdb/examples/file-storage/)
+[View Demo](https://valterkraemer.github.io/mavo-couchdb/examples/file-storage/)
 
 This example allows you to upload an image and a video.
