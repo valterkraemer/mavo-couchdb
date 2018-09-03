@@ -133,15 +133,19 @@
     },
 
     load: function () {
-      return this.remoteDB.get(this.id).then(data => {
-        this.rev = data._rev
-        return data
-      }).catch(err => {
-        if (err.status === 404) {
-          return {}
-        }
-        return Promise.reject(err)
-      })
+      this.ready
+        .then(() => {
+          return this.remoteDB.get(this.id).then(data => {
+            this.rev = data._rev
+            return data
+          })
+        })
+        .catch(err => {
+          if (err.status === 404) {
+            return {}
+          }
+          return Promise.reject(err)
+        })
     },
 
     store: function (data) {
