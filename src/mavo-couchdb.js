@@ -16,7 +16,7 @@
       const unauthenticatedPermissionsAttr = this.mavo.element.getAttribute('mv-unauthenticated-permissions')
       const authenticatedPermissionsAttr = this.mavo.element.getAttribute('mv-authenticated-permissions')
 
-      return $.include(window.PouchDB, 'https://cdn.jsdelivr.net/npm/pouchdb@6.4.1/dist/pouchdb.min.js')
+      this.ready = $.include(window.PouchDB, 'https://cdn.jsdelivr.net/npm/pouchdb@6.4.1/dist/pouchdb.min.js')
         .then(() => {
           this.remoteDB = new PouchDB(this.url)
 
@@ -79,50 +79,53 @@
     },
 
     setListenForChanges: function (bool) {
-      if (bool) {
-        if (!this.syncHandler) {
-          let dbName = hash(this.url)
+      return this.ready
+        .then(() => {
+          if (bool) {
+            if (!this.syncHandler) {
+              let dbName = hash(this.url)
 
-          let localDB = new PouchDB(dbName)
+              let localDB = new PouchDB(dbName)
 
-          this.syncHandler = localDB.replicate.from(this.remoteDB, {
-            live: true,
-            retry: true
-          }).on('change', data => {
-            if (!data || !data.docs || !data.docs.length) {
-              return
+              this.syncHandler = localDB.replicate.from(this.remoteDB, {
+                live: true,
+                retry: true
+              }).on('change', data => {
+                if (!data || !data.docs || !data.docs.length) {
+                  return
+                }
+
+                let doc = data.docs[0]
+
+                // Ignore if data is old
+                if (this.compareDocRevs({
+                    _rev: this.rev
+                  }, doc) !== 1) {
+                  return
+                }
+
+                this.rev = doc._rev
+
+                // Otherwise error is swallowed by PouchDB
+                try {
+                  // eslint-disable-next-line standard/no-callback-literal
+                  this.onNewData(doc)
+                } catch (err) {
+                  console.error('onChange err', err)
+                }
+              }).on('paused', info => {
+                // eslint-disable-next-line standard/no-callback-literal
+                this.statusChangesCallbacks.forEach(callback => callback(!info))
+              }).on('error', err => {
+                // totally unhandled error (shouldn't happen)
+                this.mavo.error(`CouchDB: ${err.error}. ${err.message}`, err)
+              })
             }
-
-            let doc = data.docs[0]
-
-            // Ignore if data is old
-            if (this.compareDocRevs({
-                _rev: this.rev
-              }, doc) !== 1) {
-              return
-            }
-
-            this.rev = doc._rev
-
-            // Otherwise error is swallowed by PouchDB
-            try {
-              // eslint-disable-next-line standard/no-callback-literal
-              this.onNewData(doc)
-            } catch (err) {
-              console.error('onChange err', err)
-            }
-          }).on('paused', info => {
-            // eslint-disable-next-line standard/no-callback-literal
-            this.statusChangesCallbacks.forEach(callback => callback(!info))
-          }).on('error', err => {
-            // totally unhandled error (shouldn't happen)
-            this.mavo.error(`CouchDB: ${err.error}. ${err.message}`, err)
-          })
-        }
-      } else {
-        this.syncHandler.cancel()
-        delete this.syncHandler
-      }
+          } else {
+            this.syncHandler.cancel()
+            delete this.syncHandler
+          }
+        })
     },
 
     onNewData: function (data) {
