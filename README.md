@@ -6,7 +6,7 @@ Mavo-couchdb is made to work with [mavo-offline](https://github.com/valterkraeme
 
 Requirements:
 
-- [Mavo](https://mavo.io/get/), tested with v0.1.5
+- [Mavo](https://mavo.io/get/), tested with v0.1.6
 - [PouchDB](https://pouchdb.com), tested with v6.4.1
 - [Pouchdb-authentication](https://github.com/pouchdb-community/pouchdb-authentication), (optional) needed for authentication. Tested with v1.1.0
 
@@ -18,17 +18,11 @@ Requirements:
 
 ## Quick setup
 
-1. Get the newest version of mavo-couchdb from the [release section](https://github.com/valterkraemer/mavo-couchdb/releases).
-
-2. Add PouchDB and mavo-couchdb to your HTML file.
-```
-<script src="//cdn.jsdelivr.net/npm/pouchdb@6.4.1/dist/pouchdb.min.js"></script>
-<script src="path/to/mavo-couchdb.js"></script>
-```
-
-3. Set mv-storage to `couchdb=url-to-couchdb`
+1. Add `couchdb` to `mv-plugins`.
+2. Set mv-storage to `couchdb=url-to-couchdb`
 ```
 <main mv-app="todo"
+  mv-plugins="couchdb"
   mv-storage="couchdb=http://localhost:5984/mavo">
 
   ...
@@ -52,11 +46,7 @@ Your Mavo id will be used as name for the root object in database.
 
 ## Authentication
 
-To use authentication you need to add [pouchdb-authentication](https://github.com/pouchdb-community/pouchdb-authentication).
-
-```
-<script src="path/to/pouchdb.authentication.js"></script>
-```
+Authentication uses [pouchdb-authentication](https://github.com/pouchdb-community/pouchdb-authentication).
 
 Set up users and permissions in CouchDB: [CouchDB Security](http://docs.couchdb.org/en/2.1.0/intro/security.html)
 
