@@ -3,17 +3,14 @@
 <head>
   <title>Authentication</title>
 
-  <script src="../../../mavo-couchdb/src/pouchdb.min.js"></script>
-  <script src="../../../mavo-couchdb/src/pouchdb.authentication.min.js"></script>
+  <script src="https://get.mavo.io/mavo.js"></script>
+  <link rel="stylesheet" href="https://get.mavo.io/mavo.css">
 
-  <script src="https://get.mavo.io/0.1.5/mavo.es5.min.js"></script>
-  <link rel="stylesheet" href="https://get.mavo.io/0.1.5/mavo.css">
-
-  <script src="../../../mavo-couchdb/src/mavo-couchdb.js"></script>
   <link rel="stylesheet" href="../../../mavo-examples/authentication/style.css">
 </head>
 <body>
   <main mv-app="authentication"
+    mv-plugins="couchdb"
     mv-storage="couchdb=https://couchdb-d25f8f.smileupps.com/authentication"
     mv-autosave="0"
     mv-unauthenticated-permissions="read login">
@@ -36,7 +33,7 @@
 
   </main>
 
-  <script src="http://localhost:35729/livereload.js"></script>
+  <!--<script src="http://localhost:35729/livereload.js"></script>-->
 
 </body>
 </html>

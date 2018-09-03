@@ -11,56 +11,61 @@
       this.id = this.mavo.id || 'mavo'
       this.url = value.split('couchdb=')[1]
 
-      this.remoteDB = new PouchDB(this.url)
-
       // ATTRIBUTES
 
-      let unauthenticatedPermissionsAttr = this.mavo.element.getAttribute('mv-unauthenticated-permissions')
-      let authenticatedPermissionsAttr = this.mavo.element.getAttribute('mv-authenticated-permissions')
+      const unauthenticatedPermissionsAttr = this.mavo.element.getAttribute('mv-unauthenticated-permissions')
+      const authenticatedPermissionsAttr = this.mavo.element.getAttribute('mv-authenticated-permissions')
 
-      // PERMISSIONS
+      return $.include(window.PouchDB, 'https://cdn.jsdelivr.net/npm/pouchdb@6.4.1/dist/pouchdb.min.js')
+        .then(() => {
+          this.remoteDB = new PouchDB(this.url)
 
-      let authenticatedPermissions = getPermissions(authenticatedPermissionsAttr) || ['read', 'edit', 'add', 'delete', 'save', 'logout']
+          // PERMISSIONS
 
-      // Use default permissions if unauthenticated-permissions isn't specified,
-      // pouchdb-authentication (https://github.com/pouchdb-community/pouchdb-authentication)
-      // has to be added if permission 'login' is used
-      let unauthenticatedPermissions = getPermissions(unauthenticatedPermissionsAttr)
-      if (unauthenticatedPermissions) {
-        if (!this.remoteDB.login && unauthenticatedPermissions.includes('login')) {
-          return this.mavo.error('CouchDB: pouchdb-authentication plugin missing (needed if permission \'login\' is specified)')
-        }
-      } else {
-        if (this.remoteDB.login) {
-          unauthenticatedPermissions = ['read', 'login']
-        } else {
-          unauthenticatedPermissions = ['read']
-        }
-      }
+          const authenticatedPermissions = getPermissions(authenticatedPermissionsAttr) || ['read', 'edit', 'add', 'delete', 'save', 'logout']
 
-      this.defaultPermissions = {
-        authenticated: authenticatedPermissions,
-        unauthenticated: unauthenticatedPermissions
-      }
+          // Use default permissions if unauthenticated-permissions isn't specified,
+          // pouchdb-authentication (https://github.com/pouchdb-community/pouchdb-authentication)
+          // has to be added if permission 'login' is used
+          const unauthenticatedPermissions = getPermissions(unauthenticatedPermissionsAttr)
 
-      this.permissions.on(this.defaultPermissions.unauthenticated)
+          this.defaultPermissions = {
+            authenticated: authenticatedPermissions,
+            unauthenticated: unauthenticatedPermissions
+          }
 
-      // INIT POUCHDB
+          this.permissions.on(this.defaultPermissions.unauthenticated)
 
-      if (this.remoteDB.getSession) {
-        this.remoteDB.getSession()
-          .then(info => this.onUser(info.userCtx))
-      }
+          if (unauthenticatedPermissions) {
+            if (!this.remoteDB.login && unauthenticatedPermissions.includes('login')) {
+              return $.include(this.remoteDB.login, 'https://github.com/pouchdb-community/pouchdb-authentication/releases/download/v1.1.3/pouchdb.authentication.min.js')
+            }
+          } else {
+            if (this.remoteDB.login) {
+              unauthenticatedPermissions = ['read', 'login']
+            } else {
+              unauthenticatedPermissions = ['read']
+            }
+          }
+        })
+        .then(() => {
+          // INIT POUCHDB
 
-      // Enable pushing data from server
-      let serverPushAttr = this.mavo.element.getAttribute('mv-server-push')
-      if (serverPushAttr !== null && serverPushAttr !== 'false') {
-        this.setListenForChanges(true)
-      }
+          if (this.remoteDB.getSession) {
+            this.remoteDB.getSession()
+              .then(info => this.onUser(info.userCtx))
+          }
+
+          // Enable pushing data from server
+          let serverPushAttr = this.mavo.element.getAttribute('mv-server-push')
+          if (serverPushAttr !== null && serverPushAttr !== 'false') {
+            this.setListenForChanges(true)
+          }
+        })
 
       // HELPER FUNCTIONS
 
-      function getPermissions (attr) {
+      function getPermissions(attr) {
         if (attr) {
           return attr.split(/\s+/)
         } else if (attr === '') {
@@ -92,8 +97,8 @@
 
             // Ignore if data is old
             if (this.compareDocRevs({
-              _rev: this.rev
-            }, doc) !== 1) {
+                _rev: this.rev
+              }, doc) !== 1) {
               return
             }
 
@@ -248,7 +253,7 @@
     }
   }))
 
-  function hash (str) {
+  function hash(str) {
     var hash = 0
     var i
     var chr
