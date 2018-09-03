@@ -133,7 +133,7 @@
     },
 
     load: function () {
-      this.ready
+      return this.ready
         .then(() => {
           return this.remoteDB.get(this.id).then(data => {
             this.rev = data._rev
