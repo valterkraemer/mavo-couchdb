@@ -2,10 +2,12 @@
   const $ = window.Bliss
   const Mavo = window.Mavo
 
-  Mavo.Backend.register($.Class({
-    extends: Mavo.Backend,
-    id: 'Couchdb',
-    constructor: function (value, o) {
+  Mavo.Backend.register(class Couchdb extends Mavo.Backend {
+    id = 'Couchdb'
+
+    constructor (value, o) {
+      super(value, o)
+
       this.statusChangesCallbacks = []
 
       this.id = this.mavo.id || 'mavo'
@@ -72,13 +74,13 @@
           return []
         }
       }
-    },
+    }
 
-    onStatusChange: function (callback) {
+    onStatusChange (callback) {
       this.statusChangesCallbacks.push(callback)
-    },
+    }
 
-    setListenForChanges: function (bool) {
+    setListenForChanges (bool) {
       return this.ready
         .then(() => {
           if (bool) {
@@ -126,13 +128,13 @@
             delete this.syncHandler
           }
         })
-    },
+    }
 
-    onNewData: function (data) {
+    onNewData (data) {
       return this.mavo.render(data)
-    },
+    }
 
-    load: function () {
+    load () {
       return this.ready
         .then(() => {
           return this.remoteDB.get(this.id).then(data => {
@@ -146,9 +148,9 @@
           }
           return Promise.reject(err)
         })
-    },
+    }
 
-    store: function (data) {
+    store (data) {
       // Needed to make this.mavo.unsavedChanges work correctly
       return Promise.resolve().then(() => {
         this.storeData = data
@@ -164,9 +166,9 @@
           this.storing = false
         })
       })
-    },
+    }
 
-    put: function (data) {
+    put (data) {
       data = this.storeData || data
       delete this.storeData
 
@@ -195,9 +197,9 @@
         this.mavo.error(`CouchDB: ${err.error}. ${err.message}`, err)
         return Promise.reject(err)
       })
-    },
+    }
 
-    login: function () {
+    login () {
       let username = window.prompt('username')
       if (!username) {
         return Promise.resolve()
@@ -214,30 +216,30 @@
           this.mavo.error('CouchDB: ' + error.message)
           return Promise.reject(error)
         })
-    },
+    }
 
-    logout: function () {
+    logout () {
       return this.remoteDB.logout().then(() => {
         this.permissions.off(this.defaultPermissions.authenticated).on(this.defaultPermissions.unauthenticated)
       })
-    },
+    }
 
-    upload: function (file) {
+    upload (file) {
       let docId = `${file.name}-${Date.now()}`
 
       return this.remoteDB.putAttachment(docId, file.name, file, file.type).then(doc => {
         return `${this.url}/${doc.id}/${file.name}`
       })
-    },
+    }
 
-    onUser: function (userCtx) {
+    onUser (userCtx) {
       if (userCtx && userCtx.name) {
         this.permissions.off(this.defaultPermissions.unauthenticated).on(this.defaultPermissions.authenticated)
       }
       return Promise.resolve()
-    },
+    }
 
-    compareDocRevs: function (docA, docB) {
+    compareDocRevs (docA, docB) {
       // If b is newer return 1
 
       if (!docA || !docA._rev) {
@@ -253,12 +255,12 @@
       }
 
       return docA._rev < docB._rev ? 1 : -1
-    },
-
-    static: {
-      test: value => value.startsWith('couchdb=')
     }
-  }))
+
+    static test (value) {
+      return value.startsWith('couchdb=')
+    }
+  })
 
   function hash(str) {
     var hash = 0
